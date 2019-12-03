@@ -57,12 +57,13 @@ componentDidUpdate(prevState){
 }
 
 
- onSubmit = e => {
-   e.preventDefault();
+ onSubmit = () => {
+   
     axios.get(`https://api.github.com/users/${this.state.followerName}`)
     .then( res => {
+      const name = this.state.followerName
       console.log(res)
-      this.setState({follower:res.data })
+      this.setState({follower:res.data, followerName: name })
     
     })
     .catch(error => {
