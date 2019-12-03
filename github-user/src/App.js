@@ -8,7 +8,9 @@ import FollowersComponent from './components/FollowersComponent'
     super()
     this.state = { 
       user: {}, 
-      followers: [] 
+      followers: [],
+      followerName: '',
+      follower: {}
     }
   }
   
@@ -40,12 +42,45 @@ import FollowersComponent from './components/FollowersComponent'
      })
      
   }
+
+
+  changeHandler = e => {
+    this.setState({followerName: e.target.value})
+  }
    
+
+componentDidUpdate(prevState){
+  if(prevState.followerName !== this.state.followerName) {
+     this.onSubmit();
+     console.log('component updated')
+  }
+}
+
+
+ onSubmit = () => {
+   
+    axios.get(`https://api.github.com/users/${this.state.followerName}`)
+    .then( res => {
+      const name = this.state.followerName
+      console.log(res)
+      this.setState({follower:res.data, followerName: name })
+    
+    })
+    .catch(error => {
+      console.log('error', error)
+    })
+
+ }
+
+
    
    render(){  
     return (
     <div>
+      <input type ='text' name='followerName' value ={this.state.followerName} onChange={this.changeHandler}/>
+      <button type ='submit' onClick={this.onSubmit}>Search Follower</button>
       <UserCard user ={this.state.user} src ={this.state.user}/> 
+      <UserCard user = {this.state.follower} src ={this.state.follower}/> 
        {this.state.followers.map(follower => (
          <FollowersComponent follower ={follower}/> 
        ))}
